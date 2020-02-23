@@ -97,6 +97,14 @@ public class Tikape {
                 case -2:
                     tietokanta.test();
                     break;
+                case 8:
+                    System.out.println("");
+                    System.out.println("Anna paikan nimi: ");
+                    String paikka = lukija.nextLine();
+                    System.out.println("Anna päivämäärä: ");
+                    String pvm = lukija.nextLine();
+                    break;
+                    
                 default:
                     break;
             }

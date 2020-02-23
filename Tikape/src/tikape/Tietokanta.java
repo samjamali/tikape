@@ -6,6 +6,7 @@
 package tikape;
 
 import java.sql.*;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date; 
@@ -98,9 +99,9 @@ public class Tietokanta {
 
     public void lisaaUusiTapahtuma(String seurantakoodi, String paikka, String kuvaus) throws SQLException {
         //Haetaan seurantakoodi id
-        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-        Date dates = timestamp;
-        String date = new SimpleDateFormat("MM/dd/yyyy").format(dates);
+        
+        Date dates = new Date();
+        String date = new SimpleDateFormat("dd/MM/yyyy HH:mm").format(dates);
         System.out.println(date);
 
         s = db.createStatement();
@@ -150,7 +151,7 @@ public class Tietokanta {
         PreparedStatement p = db.prepareStatement("SELECT id FROM Paketti WHERE seurantakoodi =?");
         p.setString(1, seurantakoodi);
         ResultSet r = p.executeQuery();
-        
+
         p = db.prepareStatement("SELECT * FROM Tapahtuma WHERE seurantakoodiId =?");
         p.setInt(1, r.getInt("id"));
 
@@ -158,11 +159,15 @@ public class Tietokanta {
 
         while (true) {
             if (r.next()) {
-                System.out.println(r.getString("date") + "," + r.getString("paikkaId") + "," + r.getString("kuvaus"));
-                
+                PreparedStatement p2 = db.prepareStatement("SELECT nimi FROM Paikka WHERE id = ?");
+                p2.setInt(1, r.getInt("paikkaId"));
+
+                ResultSet r2 = p2.executeQuery();
+
+                System.out.println(r.getString("date") + "," + r2.getString("nimi") + "," + r.getString("kuvaus"));
+
                 continue;
             } else if (!r.next()) {
-                
 
             }
             System.out.println("");
@@ -193,6 +198,15 @@ public class Tietokanta {
 
     }
     
+    public void haePaivamaara(String paikka, String pvm)throws SQLException {
+        PreparedStatement h = db.prepareStatement("SELECT id FROM Paikka WHERE paikka = ?");
+        h.setString(1, paikka);
+        ResultSet r = h.executeQuery();
+        
+        h = db.prepareStatement("SELECT COUNT()");
+        
+    }
+    
     public void test() throws SQLException {
         Statement s = db.createStatement();
         ResultSet r = s.executeQuery("SELECT * FROM Asiakas");
@@ -218,3 +232,5 @@ public class Tietokanta {
     }
 
 }
+
+//'https://stackoverflow.com/questions/22506930/how-to-query-datetime-field-using-only-date-in-sql-server
